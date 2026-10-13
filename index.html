@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="es"><!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -111,7 +110,7 @@
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    products = results.data.map((item) => {
+                    products = results.data.map((item, index) => {
                         const getField = (keys) => {
                             const foundKey = Object.keys(item).find(k => keys.includes(k.trim().toLowerCase()));
                             return foundKey ? item[foundKey] : undefined;
@@ -124,7 +123,7 @@
                         const category = getField(['category', 'categoria', 'categoría']) || 'General';
 
                         return {
-                            id: (name.toString().trim() + '_' + price).replace(/\s+/g, '_'),
+                            id: 'p_' + index,
                             name: name.toString().trim(),
                             price: price,
                             image: image.toString().trim(),
@@ -185,35 +184,29 @@
                 return;
             }
 
-            grid.innerHTML = filteredProducts.map(p => {
-                // Codificamos el producto a JSON seguro para pasarlo directo por parámetro al botón
-                const productJson = encodeURIComponent(JSON.stringify(p));
-                return `
-                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition duration-300 overflow-hidden flex flex-col justify-between group">
-                        <div class="h-64 overflow-hidden bg-slate-100 relative">
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
-                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">${p.category}</span>
-                        </div>
-                        <div class="p-5 flex flex-col flex-1 justify-between">
-                            <div>
-                                <h3 class="font-medium text-slate-900 text-sm sm:text-base mb-1 line-clamp-1">${p.name}</h3>
-                                <p class="text-slate-900 font-bold text-lg mb-4">$${p.price.toFixed(2)}</p>
-                            </div>
-                            <button onclick="addToCartObject(JSON.decode || decodeURIComponent('${productJson}'))" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-cart-plus text-sm"></i> Agregar
-                            </button>
-                        </div>
+            grid.innerHTML = filteredProducts.map((p, index) => `
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition duration-300 overflow-hidden flex flex-col justify-between group">
+                    <div class="h-64 overflow-hidden bg-slate-100 relative">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">${p.category}</span>
                     </div>
-                `;
-            }).join('');
+                    <div class="p-5 flex flex-col flex-1 justify-between">
+                        <div>
+                            <h3 class="font-medium text-slate-900 text-sm sm:text-base mb-1 line-clamp-1">${p.name}</h3>
+                            <p class="text-slate-900 font-bold text-lg mb-4">$${p.price.toFixed(2)}</p>
+                        </div>
+                        <button onclick="addToCartFiltered(${index})" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus text-sm"></i> Agregar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Corrección de decodificación segura del objeto producto
-        window.addToCartObject = function(productData) {
-            let product = productData;
-            if (typeof productData === 'string') {
-                product = JSON.parse(productData);
-            }
+        // Agregar al carrito usando el índice del arreglo filtrado actual
+        function addToCartFiltered(index) {
+            const product = filteredProducts[index];
+            if (!product) return;
 
             const existing = cart.find(item => item.id === product.id);
 
@@ -226,10 +219,11 @@
             saveCart();
             updateCartCount();
 
+            // Abrir el carrito y mostrar los items
             const drawer = document.getElementById('cart-drawer');
             drawer.classList.remove('hidden');
             renderCartItems();
-        };
+        }
 
         function toggleCart() {
             const drawer = document.getElementById('cart-drawer');
