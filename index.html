@@ -125,11 +125,12 @@
                 const response = await fetch(APPS_SCRIPT_URL);
                 const data = await response.json();
                 products = data.map((item, index) => ({
-                    id: item.id || index + 1,
-                    name: item.name || 'Sin nombre',
-                    price: parseFloat(item.price) || 0,
-                    image: item.image || 'https://via.placeholder.com/400',
-                    category: item.category || 'General'
+                    ID: item.id || index + 1,
+                    NAME: item.name || 'Sin nombre',
+                    PRICE: parseFloat(item.price) || 0,
+                    IMAGE: item.image || 'https://via.placeholder.com/400',
+                    CATEGORY: item.category || 'General'
+                    TALLA: item.talla || 'Sin Talla'
                 }));
                 filteredProducts = products;
                 renderCategories();
