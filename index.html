@@ -219,8 +219,8 @@
             const productsToShow = filteredProducts.slice(0, visibleLimit);
 
             grid.innerHTML = productsToShow.map((p, index) => `
-                <div class="bg-white rounded-2xl border border-rose-100 shadow-sm hover:shadow-md transition duration-300 overflow-hidden flex flex-col justify-between group">
-                    <div class="h-64 overflow-hidden bg-slate-100 relative">
+                <div class="bg-rose-100 rounded-2xl border border-rose-100 shadow-sm hover:shadow-md transition duration-300 overflow-hidden flex flex-col justify-between group">
+                    <div class="h-80 overflow-hidden bg-slate-100 relative">
                         <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
                         <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">${p.category}</span>
                     </div>
