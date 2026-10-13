@@ -41,13 +41,24 @@
         .brand-title {
             font-family: 'Playfair Display', serif;
         }
-        /* Ocultar barra de desplazamiento en móvil pero permitir scroll fluido */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        
+        /* CSS PURO PARA FORZAR MÓVIL (Garantía total sin depender de Tailwind) */
+        @media (max-width: 768px) {
+            #product-grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 10px !important;
+            }
+            #category-filters {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                gap: 8px !important;
+                padding-bottom: 5px !important;
+            }
+            #category-filters::-webkit-scrollbar {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -70,11 +81,10 @@
     </header>
 
     <!-- Contenido Principal / Catálogo -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-2.5 sm:px-6 lg:px-8 py-4 sm:py-10">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-10">
 
         <!-- Buscador y Filtros -->
         <div class="flex flex-col gap-3 mb-6">
-            <!-- Buscador -->
             <div class="w-full relative">
                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
@@ -82,15 +92,15 @@
                 <input type="text" id="search-input" oninput="handleSearch()" placeholder="Buscar producto..." class="w-full pl-10 pr-4 py-2 bg-white/90 backdrop-blur-sm border border-rose-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition">
             </div>
 
-            <!-- Categorías con Scroll Horizontal Forzado en Móvil -->
-            <div class="w-full overflow-x-auto no-scrollbar py-1">
-                <div id="category-filters" class="flex flex-nowrap gap-2 min-w-max px-1">
-                    <button onclick="filterCategory('ALL')" class="category-btn shrink-0 active px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs font-semibold uppercase tracking-wider bg-slate-900 text-white transition">Todos</button>
+            <!-- Contenedor de categorías con scroll -->
+            <div class="w-full overflow-x-auto">
+                <div id="category-filters" class="flex gap-2">
+                    <button onclick="filterCategory('ALL')" class="category-btn shrink-0 active px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wider bg-slate-900 text-white transition">Todos</button>
                 </div>
             </div>
         </div>
 
-        <!-- Grid de Productos: Forzado a 2 columnas exactas en móvil (grid-cols-2) -->
+        <!-- Grid de Productos -->
         <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6">
             <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-600">
                 <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-slate-900"></i>
@@ -99,14 +109,14 @@
         </div>
 
         <!-- Botón Ver Más -->
-        <div id="load-more-container" class="text-center mt-8 sm:mt-12 hidden">
-            <button onclick="loadMoreProducts()" class="bg-slate-900 text-white px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-xs sm:text-sm font-semibold hover:bg-slate-800 transition shadow-md">
+        <div id="load-more-container" class="text-center mt-8 hidden">
+            <button onclick="loadMoreProducts()" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-xs font-semibold hover:bg-slate-800 transition shadow-md">
                 Ver más productos <i class="fa-solid fa-chevron-down ml-1.5 text-xs"></i>
             </button>
         </div>
     </main>
 
-    <footer class="bg-white/60 backdrop-blur-md border-t border-rose-200/50 py-6 px-4 text-center text-[11px] sm:text-xs text-slate-600 mt-8 sm:mt-12">
+    <footer class="bg-white/60 backdrop-blur-md border-t border-rose-200/50 py-6 px-4 text-center text-[11px] text-slate-600 mt-8">
         <p>AV 4 BELLA VISTA CON CALLE 63 DIAGONAL A MARAPLUS CC CENTRO NORTE PLANTA ALTA LUNES A SABADO DE 10:00AM - 6:00PM</p>
     </footer>
 
@@ -200,7 +210,7 @@
             const container = document.getElementById('category-filters');
             
             container.innerHTML = categories.map(cat => `
-                <button onclick="filterCategory('${cat}')" class="category-btn shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition ${currentCategory === cat ? 'bg-slate-900 text-white shadow-xs' : 'bg-white/80 border border-rose-200 text-slate-700 hover:bg-white'}">
+                <button onclick="filterCategory('${cat}')" class="category-btn shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wider transition ${currentCategory === cat ? 'bg-slate-900 text-white shadow-xs' : 'bg-white/80 border border-rose-200 text-slate-700 hover:bg-white'}">
                     ${cat === 'ALL' ? 'Todos' : cat}
                 </button>
             `).join('');
@@ -231,7 +241,6 @@
             renderProducts();
         }
 
-        /* Renderizado con tarjetas optimizadas para 2 columnas en móviles */
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             const loadMoreContainer = document.getElementById('load-more-container');
@@ -299,7 +308,7 @@
 
         function updateQuantity(id, change) {
             const item = cart.find(item => item.id === id);
-            if (item) {
+            if_item: if (item) {
                 item.quantity += change;
                 if (item.quantity <= 0) {
                     cart = cart.filter(i => i.id !== id);
