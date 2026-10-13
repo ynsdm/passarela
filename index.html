@@ -98,7 +98,7 @@
     <script>
         // ⚠️ REEMPLAZA CON TU ENLACE CSV PUBLICADO DE GOOGLE SHEETS
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MoRMW33c-qQJXZzx-GFElaNa0qVZXGRWmtmQkrxAH-hdiclqqe2V_I0W8TSETFZVWcJKsrYDa-Ys/pub?gid=0&single=true&output=csv";
-        const WHATSAPP_NUMBER = "584140000000"; 
+        const WHATSAPP_NUMBER = "584220699144"; 
 
         let products = [];
         let filteredProducts = [];
@@ -117,7 +117,6 @@
                             return foundKey ? item[foundKey] : undefined;
                         };
 
-                        const id = getField(['id']) || (index + 1);
                         const name = getField(['name', 'nombre', 'producto']) || 'Sin nombre';
                         const rawPrice = getField(['price', 'precio', 'costo']) || '0';
                         const price = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, '')) || 0;
@@ -125,7 +124,7 @@
                         const category = getField(['category', 'categoria', 'categoría']) || 'General';
 
                         return {
-                            id: String(id).trim(), // Normalizamos el ID como string
+                            uniqueId: 'prod_' + index, // Identificador seguro único interno
                             name: name.toString().trim(),
                             price: price,
                             image: image.toString().trim(),
@@ -136,7 +135,7 @@
                     filteredProducts = products;
                     renderCategories();
                     renderProducts();
-                    updateCartCount(); // Actualizar contador al iniciar
+                    updateCartCount();
                 },
                 error: function(err) {
                     console.error("Error al leer CSV:", err);
@@ -197,7 +196,7 @@
                             <h3 class="font-medium text-slate-900 text-sm sm:text-base mb-1 line-clamp-1">${p.name}</h3>
                             <p class="text-slate-900 font-bold text-lg mb-4">$${p.price.toFixed(2)}</p>
                         </div>
-                        <button onclick="addToCart('${p.id}')" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                        <button onclick="addToCart('${p.uniqueId}')" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-cart-plus text-sm"></i> Agregar
                         </button>
                     </div>
@@ -211,11 +210,11 @@
             renderCartItems();
         }
 
-        function addToCart(productId) {
-            const product = products.find(p => p.id == productId);
+        function addToCart(uniqueId) {
+            const product = products.find(p => p.uniqueId === uniqueId);
             if (!product) return;
 
-            const existing = cart.find(item => item.id == productId);
+            const existing = cart.find(item => item.uniqueId === uniqueId);
 
             if (existing) {
                 existing.quantity += 1;
@@ -225,15 +224,15 @@
 
             saveCart();
             updateCartCount();
-            toggleCart(); // Abre el carrito para mostrar que se agregó con éxito
+            toggleCart(); // Abre el carrito para mostrar el producto agregado
         }
 
-        function updateQuantity(productId, change) {
-            const item = cart.find(item => item.id == productId);
+        function updateQuantity(uniqueId, change) {
+            const item = cart.find(item => item.uniqueId === uniqueId);
             if (item) {
                 item.quantity += change;
                 if (item.quantity <= 0) {
-                    cart = cart.filter(i => item.id != productId); // Corregido filtro seguro
+                    cart = cart.filter(i => i.uniqueId !== uniqueId);
                 }
             }
             saveCart();
@@ -272,9 +271,9 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="updateQuantity('${item.id}', -1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">-</button>
+                            <button onclick="updateQuantity('${item.uniqueId}', -1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">-</button>
                             <span class="text-xs font-bold w-4 text-center">${item.quantity}</span>
-                            <button onclick="updateQuantity('${item.id}', 1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">+</button>
+                            <button onclick="updateQuantity('${item.uniqueId}', 1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">+</button>
                         </div>
                     </div>
                 `;
