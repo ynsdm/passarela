@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="es"><!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -96,7 +97,6 @@
 
     <!-- Script de Lógica -->
     <script>
-        // ⚠️ ENLACE CSV PUBLICADO DE GOOGLE SHEETS
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MoRMW33c-qQJXZzx-GFElaNa0qVZXGRWmtmQkrxAH-hdiclqqe2V_I0W8TSETFZVWcJKsrYDa-Ys/pub?gid=0&single=true&output=csv";
         const WHATSAPP_NUMBER = "584220699144"; 
 
@@ -124,13 +124,13 @@
                         const category = getField(['category', 'categoria', 'categoría']) || 'General';
 
                         return {
-                            id: (name.toString().trim() + '_' + price).replace(/\s+/g, '_'), // ID único basado en nombre y precio
+                            id: (name.toString().trim() + '_' + price).replace(/\s+/g, '_'),
                             name: name.toString().trim(),
                             price: price,
                             image: image.toString().trim(),
                             category: category.toString().trim()
                         };
-                    }).filter(p => p.name !== 'Sin nombre' && p.price > 0); // Filtra filas vacías
+                    }).filter(p => p.name !== 'Sin nombre' && p.price > 0);
 
                     filteredProducts = products;
                     renderCategories();
@@ -185,11 +185,9 @@
                 return;
             }
 
-            // Guardamos los productos en un objeto global temporal para referencia directa segura
-            window.tempProductsMap = window.tempProductsMap || {};
-
             grid.innerHTML = filteredProducts.map(p => {
-                window.tempProductsMap[p.id] = p;
+                // Codificamos el producto a JSON seguro para pasarlo directo por parámetro al botón
+                const productJson = encodeURIComponent(JSON.stringify(p));
                 return `
                     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition duration-300 overflow-hidden flex flex-col justify-between group">
                         <div class="h-64 overflow-hidden bg-slate-100 relative">
@@ -201,7 +199,7 @@
                                 <h3 class="font-medium text-slate-900 text-sm sm:text-base mb-1 line-clamp-1">${p.name}</h3>
                                 <p class="text-slate-900 font-bold text-lg mb-4">$${p.price.toFixed(2)}</p>
                             </div>
-                            <button onclick="addToCartByStringId('${p.id}')" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                            <button onclick="addToCartObject(JSON.decode || decodeURIComponent('${productJson}'))" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-cart-plus text-sm"></i> Agregar
                             </button>
                         </div>
@@ -210,19 +208,14 @@
             }).join('');
         }
 
-        function toggleCart() {
-            const drawer = document.getElementById('cart-drawer');
-            drawer.classList.toggle('hidden');
-            if (!drawer.classList.contains('hidden')) {
-                renderCartItems();
+        // Corrección de decodificación segura del objeto producto
+        window.addToCartObject = function(productData) {
+            let product = productData;
+            if (typeof productData === 'string') {
+                product = JSON.parse(productData);
             }
-        }
 
-        function addToCartByStringId(id) {
-            const product = window.tempProductsMap[id];
-            if (!product) return;
-
-            const existing = cart.find(item => item.id === id);
+            const existing = cart.find(item => item.id === product.id);
 
             if (existing) {
                 existing.quantity += 1;
@@ -233,10 +226,17 @@
             saveCart();
             updateCartCount();
 
-            // Abrir carrito y actualizar vista
             const drawer = document.getElementById('cart-drawer');
             drawer.classList.remove('hidden');
             renderCartItems();
+        };
+
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            drawer.classList.toggle('hidden');
+            if (!drawer.classList.contains('hidden')) {
+                renderCartItems();
+            }
         }
 
         function updateQuantity(id, change) {
