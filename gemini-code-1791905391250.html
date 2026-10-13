@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passarela | Tu nueva tienda favorita</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts (Playfair Display & Plus Jakarta Sans / Cormorant Garamond para tipografía alta) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="icon" type="image/png" href="https://assets.softr-files.com/applications/c32952a6-aa43-469c-9079-0a9ec3504333/assets/c6d1c0f5-f972-44c0-b9aa-70b4fd965ee9.png">
+
+    <!-- Open Graph / WhatsApp / Redes Sociales -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://passarelamcbo.com/">
+    <meta property="og:title" content="Passarela | Tu nueva tienda favorita ✨">
+    <meta property="og:description" content="Explora nuestra colección de moda exclusiva y realiza tu pedido directo por WhatsApp.">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f7abc7;
+        }
+
+        /* Tipografía idéntica a Softr */
+        .brand-title {
+            font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+            font-stretch: ultra-condensed;
+            letter-spacing: 0.08em;
+        }
+
+        /* Curva y gradiente idéntico al fondo de Softr */
+        .softr-bg {
+            background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.45) 0%, transparent 50%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.25) 0%, transparent 50%),
+                        linear-gradient(135deg, #fbb8d0 0%, #f7a2c2 40%, #fbc2d6 100%);
+        }
+
+        /* Efecto de destello diagonal curvado */
+        .softr-bg::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -30%;
+            width: 120%;
+            height: 140%;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 65%);
+            transform: rotate(-15deg);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="softr-bg relative min-h-screen flex flex-col justify-center items-center px-4 text-slate-800 antialiased overflow-hidden select-none">
+
+    <!-- Contenido Principal Centrado (Exacto Softr) -->
+    <main class="relative z-10 flex flex-col justify-center items-center text-center max-w-3xl w-full py-12">
+        
+        <!-- Píldora de Instagram -->
+        <a href="https://instagram.com" target="_blank" class="inline-flex items-center gap-2 bg-white/90 backdrop-blur-md px-5 py-2 rounded-full text-xs font-medium text-slate-700 hover:bg-white transition shadow-sm mb-10 border border-white/60">
+            <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+            <i class="fa-brands fa-instagram text-slate-600 text-sm"></i>
+            <span>Síguenos en instagram →</span>
+        </a>
+
+        <!-- Título Principal (PASSARELA en tono crema blanco idéntico) -->
+        <h1 class="brand-title text-7xl sm:text-9xl font-light text-[#FFFDF8] uppercase mb-4 tracking-widest drop-shadow-sm scale-y-110">
+            PASSARELA
+        </h1>
+
+        <!-- Subtítulo Cursiva Fina -->
+        <p class="text-[#FFFDF8] text-base sm:text-lg font-light italic tracking-wide mb-10 drop-shadow-xs opacity-95">
+            Tu nueva tienda favorita ✨
+        </p>
+
+        <!-- Botones de Acción -->
+        <div class="flex items-center justify-center gap-3 w-full max-w-xs sm:max-w-none">
+            <!-- Botón Comprar (Azul Softr) -->
+            <a href="catalogo.html" class="bg-[#3B82F6] hover:bg-[#2563EB] text-white font-medium px-8 py-3 rounded-2xl transition shadow-md text-sm text-center min-w-[130px]">
+                Comprar
+            </a>
+
+            <!-- Botón Contactanos (Blanco Softr) -->
+            <a href="https://wa.me/584220699144?text=Hola!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n" target="_blank" class="bg-white hover:bg-slate-50 text-slate-800 font-medium px-8 py-3 rounded-2xl transition shadow-md text-sm text-center min-w-[130px] border border-slate-100">
+                Contactanos
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>
