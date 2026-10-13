@@ -124,7 +124,7 @@
                         const category = getField(['category', 'categoria', 'categoría']) || 'General';
 
                         return {
-                            uniqueId: 'prod_' + index, // Identificador seguro único interno
+                            index: index, // Índice numérico seguro
                             name: name.toString().trim(),
                             price: price,
                             image: image.toString().trim(),
@@ -196,7 +196,7 @@
                             <h3 class="font-medium text-slate-900 text-sm sm:text-base mb-1 line-clamp-1">${p.name}</h3>
                             <p class="text-slate-900 font-bold text-lg mb-4">$${p.price.toFixed(2)}</p>
                         </div>
-                        <button onclick="addToCart('${p.uniqueId}')" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                        <button onclick="addToCart(${p.index})" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-cart-plus text-sm"></i> Agregar
                         </button>
                     </div>
@@ -207,14 +207,16 @@
         function toggleCart() {
             const drawer = document.getElementById('cart-drawer');
             drawer.classList.toggle('hidden');
-            renderCartItems();
+            if (!drawer.classList.contains('hidden')) {
+                renderCartItems();
+            }
         }
 
-        function addToCart(uniqueId) {
-            const product = products.find(p => p.uniqueId === uniqueId);
+        function addToCart(index) {
+            const product = products.find(p => p.index === index);
             if (!product) return;
 
-            const existing = cart.find(item => item.uniqueId === uniqueId);
+            const existing = cart.find(item => item.index === index);
 
             if (existing) {
                 existing.quantity += 1;
@@ -224,15 +226,19 @@
 
             saveCart();
             updateCartCount();
-            toggleCart(); // Abre el carrito para mostrar el producto agregado
+
+            // Forzar apertura del carrito y renderizar items de forma segura
+            const drawer = document.getElementById('cart-drawer');
+            drawer.classList.remove('hidden');
+            renderCartItems();
         }
 
-        function updateQuantity(uniqueId, change) {
-            const item = cart.find(item => item.uniqueId === uniqueId);
+        function updateQuantity(index, change) {
+            const item = cart.find(item => item.index === index);
             if (item) {
                 item.quantity += change;
                 if (item.quantity <= 0) {
-                    cart = cart.filter(i => i.uniqueId !== uniqueId);
+                    cart = cart.filter(i => i.index !== index);
                 }
             }
             saveCart();
@@ -271,9 +277,9 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="updateQuantity('${item.uniqueId}', -1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">-</button>
+                            <button onclick="updateQuantity(${item.index}, -1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">-</button>
                             <span class="text-xs font-bold w-4 text-center">${item.quantity}</span>
-                            <button onclick="updateQuantity('${item.uniqueId}', 1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">+</button>
+                            <button onclick="updateQuantity(${item.index}, 1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">+</button>
                         </div>
                     </div>
                 `;
