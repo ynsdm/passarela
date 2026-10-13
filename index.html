@@ -96,8 +96,8 @@
 
     <!-- Script de Lógica -->
     <script>
-        // ⚠️ REEMPLAZA CON TU ENLACE CSV PUBLICADO DE GOOGLE SHEETS
-        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MoRMW33c-qQJXZzx-GFElaNa0qVZXGRWmtmQkrxAH-hdiclqqe2V_I0W8TSETFZVWcJKsrYDa-Ys/pub?gid=0&single=true&output=csv";
+        // ⚠️ ENLACE CSV PUBLICADO DE GOOGLE SHEETS
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MoRMW33c-qQJXZzx-GFElAKa9Qv__gid=0&single=true&output=csv";
         const WHATSAPP_NUMBER = "584220699144"; 
 
         let products = [];
@@ -111,7 +111,7 @@
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    products = results.data.map((item, index) => {
+                    products = results.data.map((item) => {
                         const getField = (keys) => {
                             const foundKey = Object.keys(item).find(k => keys.includes(k.trim().toLowerCase()));
                             return foundKey ? item[foundKey] : undefined;
@@ -124,13 +124,13 @@
                         const category = getField(['category', 'categoria', 'categoría']) || 'General';
 
                         return {
-                            index: index, // Índice numérico seguro
+                            id: (name.toString().trim() + '_' + price).replace(/\s+/g, '_'), // ID único basado en nombre y precio
                             name: name.toString().trim(),
                             price: price,
                             image: image.toString().trim(),
                             category: category.toString().trim()
                         };
-                    });
+                    }).filter(p => p.name !== 'Sin nombre' && p.price > 0); // Filtra filas vacías
 
                     filteredProducts = products;
                     renderCategories();
@@ -185,23 +185,29 @@
                 return;
             }
 
-            grid.innerHTML = filteredProducts.map(p => `
-                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition duration-300 overflow-hidden flex flex-col justify-between group">
-                    <div class="h-64 overflow-hidden bg-slate-100 relative">
-                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
-                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">${p.category}</span>
-                    </div>
-                    <div class="p-5 flex flex-col flex-1 justify-between">
-                        <div>
-                            <h3 class="font-medium text-slate-900 text-sm sm:text-base mb-1 line-clamp-1">${p.name}</h3>
-                            <p class="text-slate-900 font-bold text-lg mb-4">$${p.price.toFixed(2)}</p>
+            // Guardamos los productos en un objeto global temporal para referencia directa segura
+            window.tempProductsMap = window.tempProductsMap || {};
+
+            grid.innerHTML = filteredProducts.map(p => {
+                window.tempProductsMap[p.id] = p;
+                return `
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition duration-300 overflow-hidden flex flex-col justify-between group">
+                        <div class="h-64 overflow-hidden bg-slate-100 relative">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
+                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">${p.category}</span>
                         </div>
-                        <button onclick="addToCart(${p.index})" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-cart-plus text-sm"></i> Agregar
-                        </button>
+                        <div class="p-5 flex flex-col flex-1 justify-between">
+                            <div>
+                                <h3 class="font-medium text-slate-900 text-sm sm:text-base mb-1 line-clamp-1">${p.name}</h3>
+                                <p class="text-slate-900 font-bold text-lg mb-4">$${p.price.toFixed(2)}</p>
+                            </div>
+                            <button onclick="addToCartByStringId('${p.id}')" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cart-plus text-sm"></i> Agregar
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function toggleCart() {
@@ -212,11 +218,11 @@
             }
         }
 
-        function addToCart(index) {
-            const product = products.find(p => p.index === index);
+        function addToCartByStringId(id) {
+            const product = window.tempProductsMap[id];
             if (!product) return;
 
-            const existing = cart.find(item => item.index === index);
+            const existing = cart.find(item => item.id === id);
 
             if (existing) {
                 existing.quantity += 1;
@@ -227,18 +233,18 @@
             saveCart();
             updateCartCount();
 
-            // Forzar apertura del carrito y renderizar items de forma segura
+            // Abrir carrito y actualizar vista
             const drawer = document.getElementById('cart-drawer');
             drawer.classList.remove('hidden');
             renderCartItems();
         }
 
-        function updateQuantity(index, change) {
-            const item = cart.find(item => item.index === index);
+        function updateQuantity(id, change) {
+            const item = cart.find(item => item.id === id);
             if (item) {
                 item.quantity += change;
                 if (item.quantity <= 0) {
-                    cart = cart.filter(i => i.index !== index);
+                    cart = cart.filter(i => i.id !== id);
                 }
             }
             saveCart();
@@ -277,9 +283,9 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="updateQuantity(${item.index}, -1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">-</button>
+                            <button onclick="updateQuantity('${item.id}', -1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">-</button>
                             <span class="text-xs font-bold w-4 text-center">${item.quantity}</span>
-                            <button onclick="updateQuantity(${item.index}, 1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">+</button>
+                            <button onclick="updateQuantity('${item.id}', 1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-200 transition text-xs font-bold">+</button>
                         </div>
                     </div>
                 `;
