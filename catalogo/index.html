@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,7 +12,6 @@
     <meta property="og:url" content="https://passarelamcbo.com/">
     <meta property="og:title" content="Passarela | Catálogo Exclusivo ✨">
     <meta property="og:description" content="Explora nuestra colección de moda, arma tu carrito y realiza tu pedido directo por WhatsApp.">
-    <!-- Enlace directo a la imagen de vista previa -->
     <meta property="og:image" content="https://passarelamcbo.com/logo.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -24,6 +22,7 @@
     <meta property="twitter:title" content="Passarela | Catálogo Exclusivo ✨">
     <meta property="twitter:description" content="Explora nuestra colección de moda, arma tu carrito y realiza tu pedido directo por WhatsApp.">
     <meta property="twitter:image" content="https://passarelamcbo.com/imagen-portada.jpg">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome para iconos -->
@@ -33,6 +32,7 @@
     <!-- Google Fonts para tipografía elegante -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://assets.softr-files.com/applications/c32952a6-aa43-469c-9079-0a9ec3504333/assets/c6d1c0f5-f972-44c0-b9aa-70b4fd965ee9.png">
+    
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -41,49 +41,58 @@
         .brand-title {
             font-family: 'Playfair Display', serif;
         }
+        /* Ocultar barra de desplazamiento en scroll de categorías pero mantener scroll pasivo */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased flex flex-col min-h-screen">
 
     <!-- Header / Navbar -->
-<header class="sticky top-0 z-40 bg-white/40 backdrop-blur-md border-b border-rose-200/50 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
-        
-        <!-- Logo en Imagen -->
-        <a href="#" class="flex items-center">
-            <img src="logo.png" alt="Passarela" class="h-20 w-auto object-contain">
-        </a>
-        
-        <div class="flex items-center gap-4">
-            <button onclick="toggleCart()" class="relative bg-slate-900 text-white px-5 py-2.5 rounded-full flex items-center gap-2.5 hover:bg-slate-800 transition shadow-sm font-medium text-sm">
-                <i class="fa-solid fa-bag-shopping text-base"></i>
-                <span class="hidden sm:inline">Pedido</span>
-                <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-rose-600 text-[11px] text-white w-5 h-5 rounded-full flex items-center justify-center font-bold ring-2 ring-white">0</span>
-            </button>
+    <header class="sticky top-0 z-40 bg-white/50 backdrop-blur-md border-b border-rose-200/50 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex justify-between items-center">
+            
+            <!-- Logo -->
+            <a href="#" class="flex items-center">
+                <img src="logo.png" alt="Passarela" class="h-12 sm:h-20 w-auto object-contain">
+            </a>
+            
+            <div class="flex items-center gap-4">
+                <button onclick="toggleCart()" class="relative bg-slate-900 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full flex items-center gap-2 hover:bg-slate-800 transition shadow-sm font-medium text-xs sm:text-sm">
+                    <i class="fa-solid fa-bag-shopping text-sm sm:text-base"></i>
+                    <span class="hidden sm:inline">Pedido</span>
+                    <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-rose-600 text-[10px] sm:text-[11px] text-white w-5 h-5 rounded-full flex items-center justify-center font-bold ring-2 ring-white">0</span>
+                </button>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <!-- Contenido Principal / Catálogo -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
 
-
-        <!-- Filtros y Buscador -->
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-            <div id="category-filters" class="flex flex-wrap justify-center md:justify-start gap-2 w-full md:w-auto">
-                <button onclick="filterCategory('ALL')" class="category-btn active px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-slate-900 text-white transition">Todos</button>
-            </div>
-
-            <div class="w-full md:w-72 relative">
+        <!-- Buscador y Categorías -->
+        <div class="flex flex-col gap-3 mb-6 sm:mb-8">
+            <!-- Buscador -->
+            <div class="w-full relative">
                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </span>
-                <input type="text" id="search-input" oninput="handleSearch()" placeholder="Buscar producto..." class="w-full pl-10 pr-4 py-2 bg-white/90 backdrop-blur-sm border border-rose-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition">
+                <input type="text" id="search-input" oninput="handleSearch()" placeholder="Buscar producto..." class="w-full pl-10 pr-4 py-2.5 bg-white/90 backdrop-blur-sm border border-rose-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition shadow-xs">
+            </div>
+
+            <!-- Filtros de Categorías con Scroll Horizontal en Móvil -->
+            <div id="category-filters" class="flex overflow-x-auto no-scrollbar gap-2 py-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap">
+                <button onclick="filterCategory('ALL')" class="category-btn active shrink-0 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-slate-900 text-white transition">Todos</button>
             </div>
         </div>
 
-        <!-- Grid de Productos -->
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Grid de Productos (2 por fila en móvil) -->
+        <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-600">
                 <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-slate-900"></i>
                 <p class="text-sm font-medium">Cargando productos...</p>
@@ -91,23 +100,23 @@
         </div>
 
         <!-- Botón Ver Más -->
-        <div id="load-more-container" class="text-center mt-12 hidden">
-            <button onclick="loadMoreProducts()" class="bg-slate-900 text-white px-8 py-3 rounded-full text-sm font-semibold hover:bg-slate-800 transition shadow-md">
-                Ver más productos <i class="fa-solid fa-chevron-down ml-2 text-xs"></i>
+        <div id="load-more-container" class="text-center mt-8 sm:mt-12 hidden">
+            <button onclick="loadMoreProducts()" class="bg-slate-900 text-white px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-xs sm:text-sm font-semibold hover:bg-slate-800 transition shadow-md">
+                Ver más productos <i class="fa-solid fa-chevron-down ml-1.5 text-xs"></i>
             </button>
         </div>
     </main>
 
-    <footer class="bg-white/60 backdrop-blur-md border-t border-rose-200/50 py-8 text-center text-xs text-slate-600 mt-12">
+    <footer class="bg-white/60 backdrop-blur-md border-t border-rose-200/50 py-6 px-4 text-center text-[11px] sm:text-xs text-slate-600 mt-8 sm:mt-12">
         <p>AV 4 BELLA VISTA CON CALLE 63 DIAGONAL A MARAPLUS CC CENTRO NORTE PLANTA ALTA LUNES A SABADO DE 10:00AM - 6:00PM</p>
     </footer>
 
     <!-- Panel Lateral del Carrito -->
     <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
-        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-6">
             <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
-                <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-bag-shopping text-slate-900"></i>
                         <h3 class="font-bold text-slate-900 text-base">Tu Carrito</h3>
@@ -117,15 +126,15 @@
                     </button>
                 </div>
                 
-                <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 divide-y divide-slate-50"></div>
+                <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4 divide-y divide-slate-50"></div>
 
-                <div class="border-t border-slate-100 p-6 bg-slate-50/50">
+                <div class="border-t border-slate-100 p-5 bg-slate-50/50">
                     <div class="flex justify-between items-center mb-4">
                         <span class="text-slate-500 text-sm">Subtotal estimado:</span>
                         <span id="cart-total" class="text-xl font-bold text-slate-900">$0.00</span>
                     </div>
-                    <button onclick="checkoutWhatsApp()" class="w-full bg-emerald-600 text-white py-3.5 rounded-2xl font-semibold flex items-center justify-center gap-2.5 hover:bg-emerald-700 transition shadow-lg shadow-emerald-600/20 text-sm">
-                        <i class="fa-brands fa-whatsapp text-xl"></i> Enviar pedido por WhatsApp
+                    <button onclick="checkoutWhatsApp()" class="w-full bg-emerald-600 text-white py-3.5 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:bg-emerald-700 transition shadow-lg shadow-emerald-600/20 text-sm">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Enviar pedido por WhatsApp
                     </button>
                 </div>
             </div>
@@ -141,7 +150,7 @@
         let filteredProducts = [];
         let cart = JSON.parse(localStorage.getItem('passarela_cart')) || [];
         let currentCategory = 'ALL';
-        let visibleLimit = 9;
+        let visibleLimit = 10;
 
         function fetchProducts() {
             Papa.parse(CSV_URL, {
@@ -192,7 +201,7 @@
             const container = document.getElementById('category-filters');
             
             container.innerHTML = categories.map(cat => `
-                <button onclick="filterCategory('${cat}')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition ${currentCategory === cat ? 'bg-slate-900 text-white shadow-sm' : 'bg-white/80 border border-rose-200 text-slate-700 hover:bg-white'}">
+                <button onclick="filterCategory('${cat}')" class="category-btn shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition ${currentCategory === cat ? 'bg-slate-900 text-white shadow-xs' : 'bg-white/80 border border-rose-200 text-slate-700 hover:bg-white'}">
                     ${cat === 'ALL' ? 'Todos' : cat}
                 </button>
             `).join('');
@@ -201,7 +210,7 @@
         function filterCategory(category) {
             currentCategory = category;
             const searchVal = document.getElementById('search-input').value.toLowerCase();
-            visibleLimit = 9; 
+            visibleLimit = 10; 
             
             filteredProducts = products.filter(p => {
                 const matchesCat = category === 'ALL' || p.category === category;
@@ -214,12 +223,12 @@
         }
 
         function handleSearch() {
-            visibleLimit = 9; 
+            visibleLimit = 10; 
             filterCategory(currentCategory);
         }
 
         function loadMoreProducts() {
-            visibleLimit += 9; 
+            visibleLimit += 10; 
             renderProducts();
         }
 
@@ -236,18 +245,18 @@
             const productsToShow = filteredProducts.slice(0, visibleLimit);
 
             grid.innerHTML = productsToShow.map((p, index) => `
-                <div class="bg-rose-100 rounded-2xl border border-rose-100 shadow-sm hover:shadow-md transition duration-300 overflow-hidden flex flex-col justify-between group">
-                    <div class="h-80 overflow-hidden bg-slate-100 relative">
+                <div class="bg-rose-100/90 rounded-2xl border border-rose-100 shadow-xs hover:shadow-md transition duration-300 overflow-hidden flex flex-col justify-between group">
+                    <div class="h-44 sm:h-80 overflow-hidden bg-slate-100 relative">
                         <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
-                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">${p.category}</span>
+                        <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider shadow-xs max-w-[85%] truncate">${p.category}</span>
                     </div>
-                    <div class="p-5 flex flex-col flex-1 justify-between">
+                    <div class="p-3 sm:p-5 flex flex-col flex-1 justify-between">
                         <div>
-                            <h3 class="font-medium text-slate-900 text-sm sm:text-base mb-1 line-clamp-1">${p.name}</h3>
-                            <p class="text-slate-900 font-bold text-lg mb-4">$${p.price.toFixed(2)}</p>
+                            <h3 class="font-medium text-slate-900 text-xs sm:text-base mb-1 line-clamp-2 sm:line-clamp-1 leading-snug">${p.name}</h3>
+                            <p class="text-slate-900 font-bold text-base sm:text-lg mb-2 sm:mb-4">$${p.price.toFixed(2)}</p>
                         </div>
-                        <button onclick="addToCartFiltered(${index})" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-cart-plus text-sm"></i> Agregar
+                        <button onclick="addToCartFiltered(${index})" class="w-full bg-slate-900 text-white py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-semibold tracking-wide uppercase hover:bg-slate-800 active:scale-[0.98] transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-cart-plus text-xs"></i> Agregar
                         </button>
                     </div>
                 </div>
@@ -325,7 +334,7 @@
                 return `
                     <div class="flex items-center justify-between pt-4 first:pt-0">
                         <div class="flex items-center gap-3">
-                            <img src="${item.image}" class="w-14 h-14 object-cover rounded-xl border border-slate-100" onerror="this.src='https://via.placeholder.com/400'">
+                            <img src="${item.image}" class="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-xl border border-slate-100" onerror="this.src='https://via.placeholder.com/400'">
                             <div>
                                 <h4 class="font-medium text-slate-900 text-xs sm:text-sm line-clamp-1">${item.name}</h4>
                                 <p class="text-slate-500 text-xs mt-0.5">$${item.price.toFixed(2)} c/u</p>
